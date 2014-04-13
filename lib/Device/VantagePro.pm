@@ -244,7 +244,8 @@ sub do_dmpaft
 		  $hsh{'Air_Temp_Hi'} = unpack("s", substr($rec_str,6,2)) / 10; 
 		  $hsh{'Air_Temp_Lo'} = unpack("s", substr($rec_str,8,2)) / 10;
 		  $hsh{'Rain_Clicks'} = unpack("s", substr($rec_str,10,2));
-		  $hsh{'Rain_Rate'}   = unpack("s", substr($rec_str,12,2)) / 100; # Inches per hour
+		  $hsh{'Rain_Rate_Clicks'}   = unpack("s", substr($rec_str,12,2));
+                  $hsh{'Rain_Rate'}   = $hsh{'Rain_Rate_Clicks'} / 100; # Inches per hour
           $hsh{'Barometric_Press'}   = unpack("s", substr $rec_str,14,2) / 1000;  
           $hsh{'Solar'}   = unpack("s", substr $rec_str,16,2);       # watt/m**2
           $hsh{'Wind_Samples'}  = unpack("s", substr $rec_str,18,2);   
@@ -353,7 +354,8 @@ sub parse_loop_blck
   $hsh{'Relative_Humidity'} = unpack("C", substr $blk,33,1);
   # Skip other humidities for now...
 
-  $hsh{'Rain_Rate'}  = unpack("s", substr $blk,41,2) / 100; # Inches per hr
+  $hsh{'Rain_Rate_Clicks'}  = unpack("s", substr $blk,41,2);
+  $hsh{'Rain_Rate'}  = $hsh{'Rain_Rate_Clicks'} / 100; # Inches per hr
   $hsh{'UV'}         = unpack("C", substr $blk,43,1);
   $hsh{'Solar'}  = unpack("s", substr $blk,44,2);       # watt/m**2
   $hsh{'Rain_Storm'} = unpack("s", substr $blk,46,2) / 100; # Inches per storm
