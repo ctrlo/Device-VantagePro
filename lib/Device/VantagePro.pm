@@ -531,6 +531,96 @@ sub get_archive_period
 }
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+sub get_timezone
+{
+ my $self    = shift @_;
+
+ use DateTime::TimeZone;
+
+ # Calculate the time zone used by the VP and return as a TimeZone object
+ 
+ my $timezone;
+ if (hex $self->get_eeprom('gmt_or_zone')->[0])
+ {
+     # Unit is configured for GMT offset value
+     # Wow, this is messy!
+     my $dst = 0; # Manual daylight saving adjustment to make
+     if (hex $self->get_eeprom('manual_or_auto')->[0])
+     {
+         # Unit has daylight saving in manual
+         $dst = hex $self->get_eeprom('daylight_savings')->[0];
+     }
+     my $val = $self->get_eeprom('gmt_offset');  # Get offset in hours
+     my $offset = hex ($val->[1].$val->[0]);     # Combine the 2 bytes together
+     $offset -= 65536 if $offset > 32767;        # 2's complement if -ve
+     $offset /= 100;                             # Convert to hours
+     $offset += $dst;                            # Adjust for daylight saving if required
+     my $hours = int $offset;                    # The whole number of hours
+     my $minutes = abs ($offset - $hours) * 60;  # The number of minutes
+     $minutes = sprintf("%02d", $minutes);       # Prefix with 0 if required
+     my $tzstr = $hours.$minutes;                # The 2 together to create tz string
+     $tzstr *= -1 if $offset < 0 && $hours == 0; # Fix negative for 0 hours
+     $tzstr = sprintf("%+05d", $tzstr);          # The final formatted string
+     $timezone = DateTime::TimeZone->new( name => $tzstr );
+ }
+ else {
+     # Unit configured for specific timezone
+     my $tz = hex $self->get_eeprom('time_zone')->[0];
+     my @timezones = qw( Pacific/Kwajalein
+                         Pacific/Midway
+                         Pacific/Honolulu
+                         America/Anchorage
+                         America/Tijuana
+                         America/Denver
+                         America/Chicago
+                         America/Mexico_City
+                         America/Monterrey
+                         America/Bogota
+                         America/New_York
+                         America/Halifax
+                         America/Santiago
+                         America/St_Johns
+                         America/Sao_Paulo
+                         America/Argentina/Buenos_Aires
+                         Atlantic/South_Georgia
+                         Atlantic/Azores
+                         Europe/London
+                         Africa/Casablanca
+                         Europe/Berlin
+                         Europe/Paris
+                         Europe/Prague
+                         Europe/Athens
+                         Africa/Cairo
+                         Europe/Bucharest
+                         Africa/Harare
+                         Asia/Jerusalem
+                         Asia/Baghdad
+                         Europe/Moscow
+                         Asia/Tehran
+                         Asia/Muscat
+                         Asia/Kabul
+                         Asia/Karachi
+                         Asia/Kolkata
+                         Asia/Almaty
+                         Asia/Bangkok
+                         Asia/Shanghai
+                         Asia/Hong_Kong
+                         Asia/Tokyo
+                         Australia/Adelaide
+                         Australia/Darwin
+                         Australia/Brisbane
+                         Australia/Hobart
+                         Asia/Magadan
+                         Pacific/Fiji
+                         Pacific/Auckland
+                     );
+     $timezone = DateTime::TimeZone->new( name => $timezones[$tz] );
+ }
+
+ return $timezone;
+}
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 sub make_date_time_stamp
 {
  my $self    = shift @_;
@@ -859,6 +949,23 @@ setting the device time to the server time.
     my $s_time = [ localtime() ]; 
     $s_time->[4] += 1; 
     $vp_obj->settime($s_time); 
+
+=head2 get_timezone
+
+Returns the timezone of the device as a DateTime::TimeZone object.
+
+The VantagePro does not deal with timezones particularly well. The time field
+contained in a record is the local time, with no information as to its
+timezone. This is problematic when the local time reverts from daylight saving
+time, as for the duration of that hour there will be multiple records
+containing the same time value, with no way of differentiating them other than
+the order that they have been recorded. In much the same way, if the timezone
+of the unit is changed, no record of this will be attached to each of the
+downloaded records.
+
+For the above reasons, it is recommended that the device is configured for a
+named timezone, rather than offset from GMT, as it is easier to compensate for
+daylight saving changes.
 
 =head2 start_loop
 
