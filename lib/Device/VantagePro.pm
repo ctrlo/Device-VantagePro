@@ -703,6 +703,7 @@ a Davis Vantage Pro Weather Station that is equiped with a WeatherLink datalogge
 =head1 SYNOPSIS
 
   use Device::VantagePro;
+  use Data::Dumper;
   
   my %arg_hsh;  
   $arg_hsh{baudrate} = 19200;
@@ -810,7 +811,7 @@ According to the documentation this call clears the archive data.
  
 =head2 gettime
  
-Retreive the current device time
+Retrieve the current device time
  
     my $ref = $vp_obj->gettime(); 
  
@@ -819,7 +820,7 @@ Returns a reference to a list ordered as
 	#        hour   :  min    :   sec       month /    day  /     year    
 	print "$ref->[2]:$ref->[1]:$ref->[0] $ref->[4]/$ref->[3]/$ref->[5]\n"; 
  
-The values are returned in the same order as provided in the Davis documentatoin. 
+The values are returned in the same order as provided in the Davis documentation. 
 
 =head2 settime
 	
@@ -844,7 +845,7 @@ call instead and read a loop data packet at whatever rate you wish.
 
 =head2 read_loop
 
-Reads the LOOP data format as identified in B<Section IX Data Formats> in the documenation. Note this
+Reads the LOOP data format as identified in B<Section IX Data Formats> in the documentation. Note this
 only reads the later revision B loop format that is found in Vantage Pro devices after April 2002.  
 
 The data is returned via a reference to a hash. 
@@ -890,10 +891,9 @@ returned. Also if no date/time stamp is provided the complete archive will be re
 
 The returned value is a reference to a list of hashes, one hash for each archive record. 
 
-   my $rst = $vp_obj->do_dmpaft($dstamp,$tstamp); 
+   my $ref = $vp_obj->do_dmpaft($dstamp,$tstamp); 
    unless ( @{$ref} ) { return 0 }
  
-   my $data_ref; 
    foreach my $arc_ref ( @{$ref} ) 
    {
       # Do something with the hash reference.... 
