@@ -567,6 +567,25 @@ sub make_date_time_stamp
 }
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+sub get_setup_bits
+{
+ my $self    = shift @_;
+
+ my $rst = $self->get_eeprom('setup_bits');
+ my $enc = hex($rst->[0]);
+ my %setup_bits;
+ $setup_bits{TimeMode}          = $enc & 0x01;
+ $setup_bits{IsAM}              = $enc >> 1 & 0x01;
+ $setup_bits{MonthDayFormat}    = $enc >> 2 & 0x01;
+ $setup_bits{WindCupSize}       = $enc >> 3 & 0x01;
+ $setup_bits{RainCollectorSize} = $enc >> 4 & 0x03;
+ $setup_bits{Latitude}          = $enc >> 6 & 0x01;
+ $setup_bits{Longitude}         = $enc >> 7 & 0x01;
+
+ return \%setup_bits;
+}
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 sub get_ymdhm
 {
  my $self    = shift @_;
@@ -924,6 +943,18 @@ The return value is the raw hex value from the unit, so needs to be decoded:
 
     my $rst = $self->get_eeprom('archive_period');
     my $archive_period = hex($rst->[0]);
+
+=head2 get_setup_bits
+ 
+Retrieve the setup of the device. Returns a hashref with the following keys:
+
+    TimeMode
+    IsAM
+    MonthDayFormat
+    WindCupSize
+    RainCollectorSize
+    Latitude
+    Longitude
 
 
 =head1 SEE ALSO
