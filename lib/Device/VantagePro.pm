@@ -405,8 +405,14 @@ sub get_eeprom
   my $item = shift @_;
  
   my ($loc, $size); 
-  # Just Archive period support todate.... More to follow 
+  # Not all supported.... More to follow 
   if ( uc($item) eq 'ARCHIVE_PERIOD' ){ $loc = '2D'; $size = '01' }
+  elsif ( uc($item) eq 'TIME_ZONE' ){ $loc = '11'; $size = '01' }
+  elsif ( uc($item) eq 'MANUAL_OR_AUTO' ){ $loc = '12'; $size = '01' }
+  elsif ( uc($item) eq 'DAYLIGHT_SAVINGS' ){ $loc = '13'; $size = '01' }
+  elsif ( uc($item) eq 'GMT_OFFSET' ){ $loc = '14'; $size = '02' }
+  elsif ( uc($item) eq 'GMT_OR_ZONE' ){ $loc = '16'; $size = '01' }
+  elsif ( uc($item) eq 'SETUP_BITS' ){ $loc = '2B'; $size = '01' }
   else { warn "$item not found"; return -1; }  
   
   my $port_obj = $self->{port_obj}; 
@@ -901,6 +907,24 @@ The returned value is a reference to a list of hashes, one hash for each archive
       # Do something with the hash reference.... 
 	  print Dumper $arc_ref; 
    } 
+
+=head2 get_eeprom
+ 
+Retrieve specific EEPROM configuration settings. Currently the following parameters are supported:
+
+    ARCHIVE_PERIOD
+    TIME_ZONE
+    MANUAL_OR_AUTO
+    DAYLIGHT_SAVINGS
+    GMT_OFFSET
+    GMT_OR_ZONE
+    SETUP_BITS
+
+The return value is the raw hex value from the unit, so needs to be decoded:
+
+    my $rst = $self->get_eeprom('archive_period');
+    my $archive_period = hex($rst->[0]);
+
 
 =head1 SEE ALSO
 
