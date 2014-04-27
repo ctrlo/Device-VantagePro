@@ -5,7 +5,8 @@ use ExtUtils::MakeMaker;
 WriteMakefile(
     NAME              => 'Device::VantagePro',
     VERSION_FROM      => 'lib/Device/VantagePro.pm', # finds $VERSION
-    PREREQ_PM         => { Device::SerialPort=>1.04   }, # e.g., Module::Name => 1.1
+    PREREQ_PM         => { Device::SerialPort=>1.04,
+                           DateTime::TimeZone=>1.65  }, # e.g., Module::Name => 1.1
     ($] >= 5.005 ?     ## Add these new keywords supported since 5.005
       (ABSTRACT_FROM  => 'lib/Device/VantagePro.pm', # retrieve abstract from module
        AUTHOR         => 'TROXEL <troxel@cpan.org>') : ()),
