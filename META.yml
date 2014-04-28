@@ -12,6 +12,7 @@ build_requires:
     ExtUtils::MakeMaker:  0
 requires:
     Device::SerialPort:  1.04
+    DateTime::TimeZone:  0
 no_index:
     directory:
         - t
