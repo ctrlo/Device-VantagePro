@@ -1,5 +1,9 @@
 Revision history for Perl extension Device::VantagePro.
 
+Ver 0.25  Mon Apr 28 2014
+  1. Fixed dependencies (added DateTime::TimeZone). Closes #1.
+     Thanks MartinMcGrath.
+
 Ver 0.24  Sun Apr 13 2014
   1. Added get_timezone function
 

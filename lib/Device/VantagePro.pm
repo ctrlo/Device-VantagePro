@@ -8,7 +8,7 @@ require Exporter;
 
 our @ISA = qw(Exporter);
 
-our $VERSION = '0.24';
+our $VERSION = '0.25';
 
 #-#use Win32::SerialPort qw(:STAT 0.19 );
 use Device::SerialPort qw(:STAT 0.19 );
