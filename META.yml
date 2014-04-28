@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               Device-VantagePro
-version:            0.23
+version:            0.24
 abstract:           Perl module to request data in real-time or archive and configure 
 author:
     - TROXEL <troxel@cpan.org>
